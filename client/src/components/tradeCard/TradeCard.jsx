@@ -8,10 +8,16 @@ const TradeCard = ({item}) => {
     // console.log(item);
     const[indexLast, setIndexLast] = useState(0);
     const[activeLast, setActiveLast] = useState(false);
-    const[active, setActive] = useState(false);
     const[index, setIndex] = useState(0);
+    const[active, setActive] = useState(false);
 
-    console.log("works 1 " + item[index].reference);
+
+    function activeHandler() {
+        if(active === false){
+            setActiveLast(false);
+        }
+    }
+
     if(item) {
         return (
             <div className="tradeCard">
@@ -20,7 +26,8 @@ const TradeCard = ({item}) => {
                         {item?.map((c,index) =>(
                             <div className = "tradeWrapperFirstInner" onClick={() => {
                                 setIndex(index);
-                                setActive(!active);}}>
+                                setActive(!active);
+                            }}>
                             <MiniTradeCard key={c.id} item={c}/>
                             </div>
                         ))}
@@ -31,12 +38,14 @@ const TradeCard = ({item}) => {
                             <>
                             {item[index]?.reference?.map((c, index) => {
                                 if(c !== null){
-                                return <div className = "tradeWrapperFirstInner" onClick={() => {
-                                setIndexLast(index);
-                                console.log(indexLast);
-                                console.log(item[index]?.reference[indexLast]);
-                                setActiveLast(!activeLast);}}>
-                                <MiniTradeCard key={c.id} item={c}/>
+                                    return <div className = "tradeWrapperFirstInner" onClick={() => {
+                                    setIndexLast(index);
+                                    // console.log(indexLast);
+                                    // console.log(item[index]?.reference[indexLast]);
+                                    setActiveLast(!activeLast);
+                                    activeHandler();
+                                    }}>
+                                    <MiniTradeCard key={c.id} item={c}/>
                                 </div>
                             }
                             }
@@ -49,13 +58,21 @@ const TradeCard = ({item}) => {
                         }
                     </div>
                     <div className="tradeWrapperCat">
-                        {activeLast
+                        {activeLast && active
                             ?
                             <EmptyCard key = {item[index]?.reference[indexLast]} item={item[index]?.reference[indexLast]}/>
                             :
                             <></>
                         }
                     </div>
+                    {/*<div className="tradeWrapperCat">*/}
+                    {/*    {activeLastLast*/}
+                    {/*        ?*/}
+                    {/*        <EmptyCard key = {item[index]?.reference[indexLast]} item={item[index]?.reference[indexLast]}/>*/}
+                    {/*        :*/}
+                    {/*        <></>*/}
+                    {/*    }*/}
+                    {/*</div>*/}
                 </div>
             </div>
         );
