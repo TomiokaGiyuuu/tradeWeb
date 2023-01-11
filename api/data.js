@@ -1,4 +1,4 @@
-const flats = [
+export default [
   {
     id: 1,
     category: "квартира",
@@ -472,5 +472,3 @@ const flats = [
     square: "80",
   },
 ];
-
-module.exports = flats;

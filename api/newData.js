@@ -1,4 +1,4 @@
-const data = [
+export const data = [
   {
     id: 1,
     category: "машина",
@@ -126,5 +126,3 @@ const data = [
     status: true,
   },
 ];
-
-module.exports = data;

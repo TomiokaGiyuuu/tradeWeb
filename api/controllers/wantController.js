@@ -1,6 +1,5 @@
-import {flats} from "../data";
+import flats from "../data.js";
 
-//const flats = require("../newData");
 export const wantsTwoPerson = (req, res) => {
     const {category, want} = req.query;
     const sortedFlats = flats.filter((item) => {
@@ -37,7 +36,7 @@ export const wantsThreePerson = (req, res) => {
     let counter = 0;
     sortedSecond = sortedSecond.map((item) => {
         let secondCounter = 0;
-        ref = item.reference.map((secondItem) => {
+        const ref = item.reference.map((secondItem) => {
             if (secondCounter <= 4) {
                 secondCounter += 1;
                 return secondItem;
@@ -60,6 +59,7 @@ export const wantsFourPerson = (req, res) => {
     const sortedFirst = flats.filter((item) => {
         return item.category === want;
     });
+
     const sortedSecond = sortedFirst.map((first) => {
         const {id, location, price, category, want} = first;
         const filter = flats.filter((item) => {
@@ -100,12 +100,11 @@ export const wantsFourPerson = (req, res) => {
             reference: thirdSort,
         };
     });
-
     res.json(sortedThird);
 };
 
 export const wantsFourMoney = (req, res) => {
-    const {category: globaleCategory, want} = req.query;
+    const {category, want} = req.query;
     const sortedFirst = flats.filter((item) => {
         return item.category === want;
     });
