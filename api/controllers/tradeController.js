@@ -13,20 +13,45 @@ const arrayFromQuery = (queryArray) => {
 async function objectsSorter(queryArray, globalCategory = null) {
     const objectsArray = arrayFromQuery(queryArray);
     return await Promise.all(objectsArray.map(async (item) => {
-        const {id, location, price, rooms, status, model, square, category, want} = item;
-        const filter = globalCategory ? await ObjectModel.find({category: want, want: globalCategory}, {}, {limit: 5})
-            : await ObjectModel.find({category: want}, {}, {limit: 5});
+        const {
+            id, location, wLocation, price, wPriceFrom, wPriceTo, rooms, wRooms,
+            category, want, status, marka, wMarka, square, wSquareFrom, wSquareTo
+        } = item;
+        const filter = globalCategory ? await ObjectModel.find({
+                category: want,
+                want: globalCategory,
+                marka: wMarka,
+                location: wLocation,
+                price: {$gte: wPriceFrom, $lte: wPriceTo},
+                rooms: wRooms,
+                square: {$gte: wSquareFrom, $lte: wSquareTo}
+            }, {}, {limit: 5})
+            : await ObjectModel.find({
+                category: want,
+                marka: wMarka,
+                location: wLocation,
+                rooms: wRooms,
+                price: {$gte: wPriceFrom, $lte: wPriceTo},
+                square: {$gte: wSquareFrom, $lte: wSquareTo}
+            }, {}, {limit: 5});
 
         return {
             id,
             location,
+            wLocation,
             price,
+            wPriceFrom,
+            wPriceTo,
             rooms,
+            wRooms,
             category,
             want,
             status,
-            model,
+            marka,
+            wMarka,
             square,
+            wSquareFrom,
+            wSquareTo,
             reference: filter,
         }
     }));
@@ -67,18 +92,28 @@ class TradeController {
             const sortedFirst = await ObjectModel.find({category: want}, {}, {limit: 5});
             const sortedSecond = await objectsSorter(sortedFirst);
             const sortedThird = await Promise.all(sortedSecond.map(async (second) => {
-                const {id, location, price, rooms, category, want, status, model, square} = second;
+                const {
+                    id, location, wLocation, price, wPriceFrom, wPriceTo, rooms, wRooms,
+                    category, want, status, marka, wMarka, square, wSquareFrom, wSquareTo
+                } = second;
                 const thirdSort = await objectsSorter(second.reference, globalCategory);
                 return {
                     id,
                     location,
+                    wLocation,
                     price,
+                    wPriceFrom,
+                    wPriceTo,
                     rooms,
+                    wRooms,
                     category,
                     want,
                     status,
-                    model,
+                    marka,
+                    wMarka,
                     square,
+                    wSquareFrom,
+                    wSquareTo,
                     reference: thirdSort
                 }
             }));
@@ -98,18 +133,28 @@ class TradeController {
             const sortedFirst = await ObjectModel.find({category: want}, {}, {limit: 5});
             const sortedSecond = await objectsSorter(sortedFirst);
             const sortedThird = await Promise.all(sortedSecond.map(async (second) => {
-                const {id, location, price, rooms, category, want, status, model, square} = second;
+                const {
+                    id, location, wLocation, price, wPriceFrom, wPriceTo, rooms, wRooms,
+                    category, want, status, marka, wMarka, square, wSquareFrom, wSquareTo
+                } = second;
                 const thirdSort = await objectsSorter(second.reference);
                 return {
                     id,
                     location,
+                    wLocation,
                     price,
+                    wPriceFrom,
+                    wPriceTo,
                     rooms,
+                    wRooms,
                     category,
                     want,
                     status,
-                    model,
+                    marka,
+                    wMarka,
                     square,
+                    wSquareFrom,
+                    wSquareTo,
                     reference: thirdSort
                 }
             }));
@@ -125,7 +170,16 @@ class TradeController {
 
     async getAllFlats(req, res, next) {
         try {
-            const flats = await ObjectModel.find({});
+            const {location, rooms} = req.query;
+            const sortQuery = {};
+            if (location) {
+                sortQuery.location = location;
+            }
+            if (rooms) {
+                sortQuery.rooms = rooms;
+            }
+
+            const flats = await ObjectModel.find(sortQuery);
             res.json(flats);
 
             return next();
